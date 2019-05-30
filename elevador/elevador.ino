@@ -1,112 +1,76 @@
 
-/* Define the outputs for the 7 segments display
-A0 -> a-segment
-A1 -> b-segment
-A2 -> c-segment
-A3 -> d-segment
-A4 -> e-segment
-A5 -> f-segment
-12 -> g-segment
-13 -> dp-segment
-*/
-const int display7Seg[] = {A0,A1,A2,A3,A4,A5,12,13};
+#include "display7Seg.h"
+#include "motor.h"
 
-// Array multidimensional para mostrar los números
-int  numArray[12][8] =
-{
-  { 1, 1, 1, 1, 1, 1, 0, 0 }, // 0
-  { 0, 1, 1, 0, 0, 0, 0, 0 }, // 1
-  { 1, 1, 0, 1, 1, 0, 1, 0 }, // 2
-  { 1, 1, 1, 1, 0, 0, 1, 0 }, // 3
-  { 0, 1, 1, 0, 0, 1, 1, 0 }, // 4
-  { 1, 0, 1, 1, 0, 1, 1, 0 }, // 5
-  { 1, 0, 1, 1, 1, 1, 1, 0 }, // 6
-  { 1, 1, 1, 0, 0, 0, 0, 0 }, // 7
-  { 1, 1, 1, 1, 1, 1, 1, 0 }, // 8
-  { 1, 1, 1, 0, 0, 1, 1, 0 }, // 9
-  { 1, 0, 1, 1, 0, 1, 1, 1 }, // Letter S
-  { 1, 1, 1, 1, 1, 1, 1, 1 }, // Letter B
-  
-};
+const int buttonFloor_1 = 6;
+const int buttonFloor_2 = 7;
+const int buttonFloor_3 = 8;
 
-int symbolArray[3][8] =
-{
-  { 1, 0, 0, 0, 0, 0, 0, 0 }, // Upper dash
-  { 0, 0, 0, 0, 0, 0, 1, 0 }, // Middle dash
-  { 0, 0, 0, 1, 0, 0, 0, 0 }, // Bottom dash
-};
+const int sensorFloor_1 = 4;
+const int sensorFloor_2 = 3;
+const int sensorFloor_3 = 2;
 
+// Speed in percentage for the elevator ranging from 0 to 100
+int speed = 50;
+
+int actualFloor;
 
 void setup() {
-    for (int i=0;i<8;i++){
-      pinMode(display7Seg[i], OUTPUT);
-    }
+  // Configure the pins for the 7 segments display
+  for (int i=0;i<8;i++){
+    pinMode(display7Seg[i], OUTPUT);
+  }
+  
+  // Configure the pins for the buttons and sensors for the levels
+  pinMode(buttonFloor_1,INPUT);
+  pinMode(buttonFloor_2,INPUT);
+  pinMode(buttonFloor_3,INPUT);
+  pinMode(sensorFloor_1,INPUT);
+  pinMode(sensorFloor_1,INPUT);
+  pinMode(sensorFloor_1,INPUT);
+  
+  // Configure the pins for the motor
+  pinMode(motorPin_1,OUTPUT);
+  pinMode(motorPin_2,OUTPUT);
+  pinMode(motorEnA,OUTPUT);
 
-    initDisplay();
-    
+  //Show the initial signal for a working display
+  initDisplay();  
 }
 
 void loop() {
-  countUp();
-  
-  while(true) {
-    for(int i=0;i<10;i++) {
-      flashingUp();
-    }
-    displayOff();
-    delay(1000);
-    for(int i=0;i<10;i++) {
-      flashingDown();
-    }
-  }
-
-}
-
-// Turn ON and the OFF the display to show that it works
-void initDisplay(){
-    // loop to turn leds ON
-    for (int j=0;j<8;j++){
-      digitalWrite(display7Seg[j],HIGH);
-    }
-    delay(2000);
-    // loop to turn leds OFF
-    displayOff();
-    delay(2000);
-}
-
-// Do a counting task from 0 to 9
-void countUp(){
-   for (int i=0;i<10;i++){
-    for (int j=0;j<8;j++){
-      digitalWrite(display7Seg[j], numArray[i][j]);
-    }
-    delay(250);
-  }
-}
-
-// Turn Off the display
-void displayOff() {
-  for (int j=0;j<8;j++){
-      digitalWrite(display7Seg[j],LOW);
-  }
-}
-
-// Show a flashing pattern to signal the Up direction
-void flashingUp(){
-  for (int i=0;i<3;i++){
-      for (int j=0;j<8;j++){
-        digitalWrite(display7Seg[j], symbolArray[i][j]);
+   if(digitalRead(buttonFloor_3) == HIGH) {
+      while(sensorFloor_3 == LOW) {
+        motorGoUp(speed);
       }
-      delay(100);
-    }
-}
-
-// Show a flashing pattern to signal the Bottom direction
-void flashingDown(){
-  for (int i=2;i>=0;i--){
-      for (int j=0;j<8;j++){
-        digitalWrite(display7Seg[j], symbolArray[i][j]);
+      motorBrake();
+      actualFloor = 3;
+      displayNumber(actualFloor);
+   }
+   else if(digitalRead(buttonFloor_1) == HIGH) {
+      while(sensorFloor_1 == LOW){
+        motorGoDown(speed);
       }
-      delay(100);
-    }
+      motorBrake();
+      actualFloor = 1;
+      displayNumber(actualFloor);
+   }
+   else if(digitalRead(buttonFloor_2) == HIGH) {
+      if (actualFloor == 3) {
+        while(sensorFloor_2 == LOW){
+          motorGoDown(speed);
+        }
+        motorBrake();
+        actualFloor = 2;
+        displayNumber(actualFloor);
+      }
+      else if (actualFloor == 1) {
+        while(sensorFloor_2 == LOW){
+          motorGoUp(speed);
+        }
+        motorBrake();
+        actualFloor = 2;
+        displayNumber(actualFloor);
+      }
+   }
 }
