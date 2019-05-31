@@ -42,7 +42,7 @@ void setup() {
 }
 
 void loop() {
-   if(digitalRead(buttonFloor_3) == HIGH) {
+   if(digitalRead(buttonFloor_3) == HIGH && actualFloor!=3) {
       while(digitalRead(sensorFloor_3) == LOW) {
         motorGoUp(speed);
  
@@ -51,7 +51,7 @@ void loop() {
       actualFloor = 3;
       displayNumber(actualFloor);
    }
-   else if(digitalRead(buttonFloor_1) == HIGH) {
+   else if(digitalRead(buttonFloor_1) == HIGH && actualFloor!=1) {
       while(digitalRead(sensorFloor_1) == LOW){
         motorGoDown(speed);
 
@@ -60,7 +60,7 @@ void loop() {
       actualFloor = 1;
       displayNumber(actualFloor);
    }
-   else if(digitalRead(buttonFloor_2) == HIGH) {
+   else if(digitalRead(buttonFloor_2) == HIGH && actualFloor!=2) {
       if (actualFloor == 3) {
         while(digitalRead(sensorFloor_2) == LOW){
           motorGoDown(speed);
@@ -82,7 +82,7 @@ void loop() {
 
 void homeElevator() {
   while(digitalRead(sensorFloor_1) == LOW) {
-    motorGoDown(10);
+    motorGoDown(speed*0.75);
   }
   motorBrake();
   actualFloor = 1;
