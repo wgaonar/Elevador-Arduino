@@ -73,6 +73,12 @@ void displayNumber(int number) {
   }
 }
 
+void displaySymbol(int symbol) {
+  for (int segment=0;segment<8;segment++){
+      digitalWrite(display7Seg[segment], symbolArray[symbol][segment]);
+  }
+}
+
 // Turn On the display
 void displayOn() {
   for (int segment=0;segment<8;segment++){
@@ -90,13 +96,10 @@ void displayOff() {
 // Do a counting task from 0 to 9
 void countUp(){
   // Go into each number of the matrix of numbers
-  for (int i=0;i<10;i++){
-    // Go into each segment of the display
-    for (int segment=0;segment<8;segment++){
-      digitalWrite(display7Seg[segment], numArray[i][segment]);
-    }
+  for (int number=0;number<10;number++){
+    displayNumber(number);
     // Wait one second showing 0 befor continue with the counting
-    if (i==0)
+    if (number==0)
       delay(500);
     else
       delay(125);
@@ -116,20 +119,16 @@ void directionPattern(int times){
 
 // Show a flashing pattern to signal the Up direction
 void flashingUp(){
-  for (int i=0;i<3;i++){
-      for (int segment=0;segment<8;segment++){
-        digitalWrite(display7Seg[segment], symbolArray[i][segment]);
-      }
+  for (int symbol=0;symbol<3;symbol++){
+      displaySymbol(symbol);
       delay(100);
     }
 }
 
 // Show a flashing pattern to signal the Down direction
 void flashingDown(){
-  for (int i=2;i>=0;i--){
-      for (int segment=0;segment<8;segment++){
-        digitalWrite(display7Seg[segment], symbolArray[i][segment]);
-      }
+  for (int symbol=2;symbol>=0;symbol--){
+      displaySymbol(symbol);
       delay(100);
-    }
+   }
 }

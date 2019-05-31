@@ -42,6 +42,7 @@ void loop() {
    if(digitalRead(buttonFloor_3) == HIGH) {
       while(sensorFloor_3 == LOW) {
         motorGoUp(speed);
+        flashingUp();
       }
       motorBrake();
       actualFloor = 3;
@@ -50,6 +51,7 @@ void loop() {
    else if(digitalRead(buttonFloor_1) == HIGH) {
       while(sensorFloor_1 == LOW){
         motorGoDown(speed);
+        flashingDown();
       }
       motorBrake();
       actualFloor = 1;
@@ -59,6 +61,7 @@ void loop() {
       if (actualFloor == 3) {
         while(sensorFloor_2 == LOW){
           motorGoDown(speed);
+          flashingDown();
         }
         motorBrake();
         actualFloor = 2;
@@ -67,6 +70,7 @@ void loop() {
       else if (actualFloor == 1) {
         while(sensorFloor_2 == LOW){
           motorGoUp(speed);
+          flashingUp();
         }
         motorBrake();
         actualFloor = 2;
