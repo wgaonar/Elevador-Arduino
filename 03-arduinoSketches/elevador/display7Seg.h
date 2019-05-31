@@ -60,8 +60,8 @@ void initDisplay(){
     countUp();
     delay(500);
 
-    // Show 5 times the direction pattern in both directions
-    directionPattern(5);
+    // Show X times the direction pattern in both directions
+    directionPattern(2);
 
     // Let the display be ready to start with the program
     displayOff();
@@ -121,14 +121,22 @@ void directionPattern(int times){
 void flashingUp(){
   for (int symbol=0;symbol<3;symbol++){
       displaySymbol(symbol);
-      delay(100);
-    }
+      delay(150);
+  }
 }
 
 // Show a flashing pattern to signal the Down direction
 void flashingDown(){
   for (int symbol=2;symbol>=0;symbol--){
       displaySymbol(symbol);
-      delay(100);
+      delay(150);
+   }
+}
+
+// Overloaded function with the delay time as a paremeter
+void flashingDown(int delayTime){
+  for (int symbol=2;symbol>=0;symbol--){
+      displaySymbol(symbol);
+      delay(delayTime);
    }
 }

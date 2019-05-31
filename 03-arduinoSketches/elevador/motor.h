@@ -9,6 +9,7 @@ void motorGoUp(int speed){
   analogWrite(motorEnA,mappedSpeed);
   digitalWrite(motorPin_1,HIGH);
   digitalWrite(motorPin_2,LOW);
+  flashingDown(); // Check a synchronization problem. I have to use the inverse pattern
   delay(100);
 }
 
@@ -18,6 +19,7 @@ void motorGoDown(int speed){
   analogWrite(motorEnA,mappedSpeed);
   digitalWrite(motorPin_1,LOW);
   digitalWrite(motorPin_2,HIGH);
+  flashingUp(); // Check a synchronization problem. I have to use the inverse pattern
   delay(100);
 }
 
