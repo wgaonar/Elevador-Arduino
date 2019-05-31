@@ -2,13 +2,13 @@
 #include "display7Seg.h"
 #include "motor.h"
 
+const int sensorFloor_1 = 2;
+const int sensorFloor_2 = 3;
+const int sensorFloor_3 = 4;
+
 const int buttonFloor_1 = 6;
 const int buttonFloor_2 = 7;
 const int buttonFloor_3 = 8;
-
-const int sensorFloor_1 = 4;
-const int sensorFloor_2 = 3;
-const int sensorFloor_3 = 2;
 
 // Speed in percentage for the elevator ranging from 0 to 100
 int speed = 50;
@@ -17,8 +17,8 @@ int actualFloor;
 
 void setup() {
   // Configure the pins for the 7 segments display
-  for (int i=0;i<8;i++){
-    pinMode(display7Seg[i], OUTPUT);
+  for (int segment=0;segment<8;segment++){
+    pinMode(display7Seg[segment], OUTPUT);
   }
   
   // Configure the pins for the buttons and sensors for the levels
@@ -34,24 +34,27 @@ void setup() {
   pinMode(motorPin_2,OUTPUT);
   pinMode(motorEnA,OUTPUT);
 
-  //Show the initial signal for a working display
-  initDisplay();  
+  // Show the initial signal for a working display
+  initDisplay();
+
+  // Initialize the elevator send it to the 1 floor
+  homeElevator();
 }
 
 void loop() {
    if(digitalRead(buttonFloor_3) == HIGH) {
-      while(sensorFloor_3 == LOW) {
+      while(digitalRead(sensorFloor_3) == LOW) {
         motorGoUp(speed);
-        flashingUp();
+ 
       }
       motorBrake();
       actualFloor = 3;
       displayNumber(actualFloor);
    }
    else if(digitalRead(buttonFloor_1) == HIGH) {
-      while(sensorFloor_1 == LOW){
+      while(digitalRead(sensorFloor_1) == LOW){
         motorGoDown(speed);
-        flashingDown();
+
       }
       motorBrake();
       actualFloor = 1;
@@ -59,22 +62,29 @@ void loop() {
    }
    else if(digitalRead(buttonFloor_2) == HIGH) {
       if (actualFloor == 3) {
-        while(sensorFloor_2 == LOW){
+        while(digitalRead(sensorFloor_2) == LOW){
           motorGoDown(speed);
-          flashingDown();
         }
         motorBrake();
         actualFloor = 2;
         displayNumber(actualFloor);
       }
       else if (actualFloor == 1) {
-        while(sensorFloor_2 == LOW){
+        while(digitalRead(sensorFloor_2) == LOW){
           motorGoUp(speed);
-          flashingUp();
         }
         motorBrake();
         actualFloor = 2;
         displayNumber(actualFloor);
       }
    }
+}
+
+void homeElevator() {
+  while(digitalRead(sensorFloor_1) == LOW) {
+    motorGoDown(10);
+  }
+  motorBrake();
+  actualFloor = 1;
+  displayNumber(actualFloor);
 }
