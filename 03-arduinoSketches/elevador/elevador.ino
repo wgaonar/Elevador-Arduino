@@ -82,7 +82,7 @@ void loop() {
 
 void homeElevator() {
   while(digitalRead(sensorFloor_1) == LOW) {
-    motorGoDown(speed*0.75);
+    motorGoDown(speed*0.5);
   }
   motorBrake();
   actualFloor = 1;
