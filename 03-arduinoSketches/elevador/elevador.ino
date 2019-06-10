@@ -10,8 +10,10 @@ const int buttonFloor_1 = 6;
 const int buttonFloor_2 = 7;
 const int buttonFloor_3 = 8;
 
+const int speedControl = A6;
+
 // Speed in percentage for the elevator ranging from 0 to 100
-int speed = 50;
+int speed = 0;
 
 int actualFloor;
 
@@ -42,10 +44,12 @@ void setup() {
 }
 
 void loop() {
+
+  speed = analogRead(speedControl);
+   
    if(digitalRead(buttonFloor_3) == HIGH && actualFloor!=3) {
       while(digitalRead(sensorFloor_3) == LOW) {
         motorGoUp(speed);
- 
       }
       motorBrake();
       actualFloor = 3;
@@ -82,7 +86,7 @@ void loop() {
 
 void homeElevator() {
   while(digitalRead(sensorFloor_1) == LOW) {
-    motorGoDown(speed*0.5);
+    motorGoDown(speed*0.75);
   }
   motorBrake();
   actualFloor = 1;
