@@ -12,8 +12,9 @@ const int buttonFloor_3 = 8;
 
 const int speedControl = A6;
 
-// Speed in percentage for the elevator ranging from 0 to 100
+// Speed in percentage for the elevator ranging from 0 to 100 %
 int speed = 0;
+int oldSpeed = 0;
 
 int actualFloor;
 
@@ -41,11 +42,13 @@ void setup() {
 
   // Initialize the elevator send it to the 1 floor
   homeElevator();
+
+  // initialize serial communication at 9600 bits per second:
+  Serial.begin(9600);
 }
 
 void loop() {
-
-  speed = analogRead(speedControl);
+  speed = map(analogRead(speedControl),0,1023,0,255); // map the speed from 0-1023 to 0-255
    
    if(digitalRead(buttonFloor_3) == HIGH && actualFloor!=3) {
       while(digitalRead(sensorFloor_3) == LOW) {
