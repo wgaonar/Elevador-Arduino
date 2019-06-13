@@ -12,8 +12,8 @@ A2 -> c-segment
 A3 -> d-segment
 A4 -> e-segment
 A5 -> f-segment
-12 -> g-segment
-13 -> dp-segment
+D12 -> g-segment
+D13 -> dp-segment
 */
 const int display7Seg[] = {A0,A1,A2,A3,A4,A5,12,13};
 

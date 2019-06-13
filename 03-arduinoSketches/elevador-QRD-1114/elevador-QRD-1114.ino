@@ -1,10 +1,26 @@
+/******************************************************************************
+elevador-QRD-1114.ino
+Main program to control a elevator's model
+Wilmer Gaona @ Marymount School Cuernavaca
+June 12, 2019
 
-#include "display7Seg.h"
-#include "motor.h"
+Connect a QRD1114, 330 resistor and 10k resistor as follows:
 
-const int sensorFloor_1 = 2;
-const int sensorFloor_2 = 3;
-const int sensorFloor_3 = 4;
+QRD1114 Pin ---- Arduino ---- Resistors
+    1              A0      10k Pull-up to 5V
+    2              GND
+    3                      220 Resistor to 5V
+    4              GND
+
+As an object comes closer to the QRD1114, the voltage on A0 should go down.
+*******************************************************************************/
+
+#include "display7Seg-QRD-1114.h"
+#include "motor-QRD-1114.h"
+
+const int sensorFloor_1 = A3;
+const int sensorFloor_2 = A4;
+const int sensorFloor_3 = A5;
 
 const int buttonFloor_1 = 6;
 const int buttonFloor_2 = 7;
@@ -17,6 +33,9 @@ int speed = 0;
 int oldSpeed = 0;
 
 int actualFloor;
+
+// Threshold value for detecting the elevator
+int QRD1114_Threshold = 200;
 
 void setup() {
   // Configure the pins for the 7 segments display
@@ -51,7 +70,7 @@ void loop() {
   speed = map(analogRead(speedControl),0,1023,0,255); // map the speed from 0-1023 to 0-255
    
    if(digitalRead(buttonFloor_3) == HIGH && actualFloor!=3) {
-      while(digitalRead(sensorFloor_3) == LOW) {
+      while(analogRead(sensorFloor_3) >= QRD1114_Threshold) {
         motorGoUp(speed);
       }
       motorBrake();
@@ -59,7 +78,7 @@ void loop() {
       displayNumber(actualFloor);
    }
    else if(digitalRead(buttonFloor_1) == HIGH && actualFloor!=1) {
-      while(digitalRead(sensorFloor_1) == LOW){
+      while(analogRead(sensorFloor_1) >= QRD1114_Threshold){
         motorGoDown(speed);
 
       }
@@ -69,7 +88,7 @@ void loop() {
    }
    else if(digitalRead(buttonFloor_2) == HIGH && actualFloor!=2) {
       if (actualFloor == 3) {
-        while(digitalRead(sensorFloor_2) == LOW){
+        while(analogRead(sensorFloor_2) >= QRD1114_Threshold){
           motorGoDown(speed);
         }
         motorBrake();
@@ -77,7 +96,7 @@ void loop() {
         displayNumber(actualFloor);
       }
       else if (actualFloor == 1) {
-        while(digitalRead(sensorFloor_2) == LOW){
+        while(analogRead(sensorFloor_2) >= QRD1114_Threshold){
           motorGoUp(speed);
         }
         motorBrake();
@@ -88,7 +107,7 @@ void loop() {
 }
 
 void homeElevator() {
-  while(digitalRead(sensorFloor_1) == LOW) {
+  while(analogRead(sensorFloor_1) >= QRD1114_Threshold) {
     motorGoDown(speed*0.75);
   }
   motorBrake();
