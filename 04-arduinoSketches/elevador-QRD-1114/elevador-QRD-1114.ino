@@ -28,11 +28,11 @@ const int buttonFloor_3 = 8;
 
 const int speedControl = A6;
 
-// Speed in percentage for the elevator ranging from 0 to 100 %
+// Speed is in percentage for the elevator ranging from 0 to 255
 int speed = 0;
-int oldSpeed = 0;
 
-int actualFloor;
+
+int actualFloor=0;
 
 // Threshold value for detecting the elevator
 int QRD1114_Threshold = 200;
@@ -56,18 +56,21 @@ void setup() {
   pinMode(motorPin_2,OUTPUT);
   pinMode(motorEnA,OUTPUT);
 
+    // initialize serial communication at 9600 bits per second:
+  Serial.begin(9600);
+
   // Show the initial signal for a working display
   initDisplay();
 
   // Initialize the elevator send it to the 1 floor
   homeElevator();
 
-  // initialize serial communication at 9600 bits per second:
-  Serial.begin(9600);
+
 }
 
 void loop() {
-  speed = map(analogRead(speedControl),0,1023,0,255); // map the speed from 0-1023 to 0-255
+  speed = map(analogRead(speedControl),0,1023,75,255); // map the speed from 0-1023 to 200-255
+  delay(10);
    
    if(digitalRead(buttonFloor_3) == HIGH && actualFloor!=3) {
       while(analogRead(sensorFloor_3) >= QRD1114_Threshold) {
@@ -107,8 +110,15 @@ void loop() {
 }
 
 void homeElevator() {
+
   while(analogRead(sensorFloor_1) >= QRD1114_Threshold) {
-    motorGoDown(speed*0.75);
+    speed = map(analogRead(speedControl),0,1023,128,255); // map the speed from 0-1023 to 200-255
+    motorGoDown(speed);
+    Serial.print("homing QRD1114_Value: ");
+    Serial.print(analogRead(sensorFloor_1));
+    Serial.print(" Speed: ");
+    Serial.println(speed);
+    delay(10);
   }
   motorBrake();
   actualFloor = 1;
